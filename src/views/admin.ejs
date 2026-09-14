@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AllyAlways — Admin</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.6.0/lib/qr-code-styling.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -463,6 +463,20 @@
           <div class="val" id="qrDestUrl"></div>
         </div>
         <div class="qr-info-row">
+          <label>สไตล์</label>
+          <div class="qr-sizes">
+            <button class="size-btn" id="styleSquare" onclick="changeStyle('square')">■ Square</button>
+            <button class="size-btn active" id="styleRounded" onclick="changeStyle('rounded')">● Rounded</button>
+          </div>
+        </div>
+        <div class="qr-info-row">
+          <label>โลโก้กลาง</label>
+          <div class="qr-sizes">
+            <button class="size-btn active" id="logoOn" onclick="changeLogo(true)">มีโลโก้</button>
+            <button class="size-btn" id="logoOff" onclick="changeLogo(false)">ไม่มี</button>
+          </div>
+        </div>
+        <div class="qr-info-row">
           <label>ขนาด QR Code</label>
           <div class="qr-sizes">
             <button class="size-btn" onclick="changeSize(256)">256px</button>
@@ -484,6 +498,26 @@
     let currentQRUrl = ''
     let currentQRSlug = ''
     let currentSize = 320
+    let currentQRStyle = 'rounded'
+    let showLogo = true
+
+    const ALLY_LOGO = `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 183.8 94"><path fill="%2332bebc" d="M180.1,64.6V27.8c0-1.3-.6-2.1-2-2.1h-6.1c-1.2,0-1.8.8-1.8,2.2v3.4c0,12.5-5.4,28-13.5,28s-6-3.8-6-9,.4-16.8.4-22.3-.6-2.2-1.9-2.2h-5.9c-1.2,0-2,.7-2,2.2v19.7c-2.4,5.7-7.6,12.2-17,12.2s-13.8-6.1-13.8-15.5v-4.9c12.7-3.8,24-13.3,24-24.4s-5.2-13.2-13.4-13.2c-13.6,0-19.8,14.4-19.8,31.3v11.5c0,1.3,0,2.5.2,3.8-2.5,5.5-7.7,11.5-16.7,11.5s-13.8-6.1-13.8-15.5v-4.9c12.7-3.8,24-13.3,24-24.4s-5.2-13.2-13.4-13.2c-13.6,0-19.8,14.4-19.8,31.3v11.5c0,.9,0,1.8.1,2.7-2.1,5.2-6.3,11.9-11.5,11.9s-5.5-3.6-5.5-8.2c0-7.3,1.1-21.5,1.1-23.2s-.7-2.1-1.9-2.1h-5.8c-1.1,0-1.8.7-1.8,2v1.7l-.4.2c-3-2.7-7.3-5-13.1-5-11.5,0-19.7,9.6-19.7,22.3s7.3,20.8,17.5,20.8,13.7-5.3,15.9-10.5h.4v1.5c0,5.5,4.6,9,11.1,9s13.3-5.2,16.6-10.5c3.5,6.6,10,10.5,18.6,10.5s16.7-4.2,21-10.3c3.5,6.4,9.9,10.3,18.5,10.3s15.1-3.4,19.5-8.4c1.8,5.4,6,8.4,12,8.4,8.6,0,14.2-6.5,16.6-12.9h.4c0,0,0,9.4,0,9.4,0,13.7-6.1,18.3-13,18.3s-6.6-1.9-8.6-3.5c-.8-.6-1.2-.9-1.6-.9-1.3,0-4.6,4.5-4.6,5.9,0,2.2,6,7.1,14.3,7.1,14.9,0,22.5-10.2,22.5-26.5ZM120.8,9.7c3.2,0,5,2.3,5,5.4,0,7.3-8.7,13.6-15.4,16,.3-10,3.5-21.4,10.4-21.4ZM81.3,9.7c3.2,0,5,2.3,5,5.4,0,7.3-8.7,13.6-15.4,16,.3-10,3.5-21.4,10.4-21.4ZM22.6,59.3c-5.4,0-9.5-4.7-9.5-11.9s5.4-14.2,12.7-14.2,8.4,2.6,10.4,4.7c0,7.8-4.1,21.4-13.7,21.4Z"/></svg>')}`
+
+    function buildQROptions(size) {
+      const isRounded = currentQRStyle === 'rounded'
+      return {
+        width: size,
+        height: size,
+        data: currentQRUrl,
+        image: showLogo ? ALLY_LOGO : undefined,
+        imageOptions: { margin: 6, imageSize: 0.48, crossOrigin: 'anonymous' },
+        dotsOptions: { color: '#0f172a', type: isRounded ? 'rounded' : 'square' },
+        cornersSquareOptions: { type: isRounded ? 'extra-rounded' : 'square', color: '#0f172a' },
+        cornersDotOptions: { type: isRounded ? 'dot' : 'square', color: '#0f172a' },
+        backgroundOptions: { color: '#ffffff' },
+        qrOptions: { errorCorrectionLevel: 'H' }
+      }
+    }
 
     function randomSlug() {
       const chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
@@ -496,8 +530,8 @@
       currentQRSlug = path.replace('/', '-')
       const shortUrl = location.origin + '/' + path
       currentQRUrl = shortUrl
-      document.getElementById('qrTitle').textContent = 'QR Code — ' + (label || slug)
-      document.getElementById('qrSubtitle').textContent = label !== slug ? label : ''
+      document.getElementById('qrTitle').textContent = 'QR Code — ' + (label || path)
+      document.getElementById('qrSubtitle').textContent = shortUrl
       document.getElementById('qrShortUrl').textContent = shortUrl
       document.getElementById('qrDestUrl').textContent = destUrl
       renderQR(currentSize)
@@ -509,73 +543,39 @@
       const container = document.getElementById('qrCanvas')
       container.innerHTML = ''
       document.querySelectorAll('.size-btn').forEach(b => {
-        b.classList.toggle('active', b.textContent === size + 'px')
+        if (b.textContent === size + 'px') b.classList.add('active')
+        else if (['256px','320px','512px','1024px'].includes(b.textContent)) b.classList.remove('active')
       })
       const displaySize = Math.min(size, 240)
-      new QRCode(container, {
-        text: currentQRUrl,
-        width: displaySize,
-        height: displaySize,
-        colorDark: '#0f172a',
-        colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.H
-      })
+      const qr = new QRCodeStyling(buildQROptions(displaySize))
+      qr.append(container)
     }
 
     function changeSize(size) { renderQR(size) }
 
+    function changeStyle(style) {
+      currentQRStyle = style
+      document.getElementById('styleSquare').classList.toggle('active', style === 'square')
+      document.getElementById('styleRounded').classList.toggle('active', style === 'rounded')
+      renderQR(currentSize)
+    }
+
+    function changeLogo(on) {
+      showLogo = on
+      document.getElementById('logoOn').classList.toggle('active', on)
+      document.getElementById('logoOff').classList.toggle('active', !on)
+      renderQR(currentSize)
+    }
+
     function downloadPNG() {
-      const tempDiv = document.createElement('div')
-      tempDiv.style.cssText = 'position:fixed;left:-9999px;top:-9999px'
-      document.body.appendChild(tempDiv)
-      new QRCode(tempDiv, {
-        text: currentQRUrl,
-        width: currentSize,
-        height: currentSize,
-        colorDark: '#0f172a',
-        colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.H
-      })
-      setTimeout(() => {
-        const canvas = tempDiv.querySelector('canvas')
-        const img = tempDiv.querySelector('img')
-        const a = document.createElement('a')
-        a.download = 'qr-' + currentQRSlug + '-' + currentSize + 'px.png'
-        a.href = canvas ? canvas.toDataURL('image/png') : img.src
-        a.click()
-        document.body.removeChild(tempDiv)
-      }, 120)
+      const qr = new QRCodeStyling(buildQROptions(currentSize))
+      qr.download({ name: 'qr-' + currentQRSlug + '-' + currentSize + 'px', extension: 'png' })
     }
 
     function downloadSVG() {
-      const tempDiv = document.createElement('div')
-      tempDiv.style.cssText = 'position:fixed;left:-9999px;visibility:hidden'
-      document.body.appendChild(tempDiv)
-      new QRCode(tempDiv, {
-        text: currentQRUrl,
-        width: currentSize,
-        height: currentSize,
-        correctLevel: QRCode.CorrectLevel.H
-      })
-      setTimeout(() => {
-        const canvas = tempDiv.querySelector('canvas')
-        if (canvas) {
-          const ctx = canvas.getContext('2d')
-          const d = ctx.getImageData(0, 0, canvas.width, canvas.height)
-          let rects = ''
-          for (let y = 0; y < canvas.height; y++)
-            for (let x = 0; x < canvas.width; x++)
-              if (d.data[(y * canvas.width + x) * 4] < 128)
-                rects += `<rect x="${x}" y="${y}" width="1" height="1"/>`
-          const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${canvas.width} ${canvas.height}" width="${currentSize}" height="${currentSize}"><rect width="${canvas.width}" height="${canvas.height}" fill="white"/><g fill="#0f172a">${rects}</g></svg>`
-          const a = document.createElement('a')
-          a.href = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }))
-          a.download = 'qr-' + currentQRSlug + '-' + currentSize + 'px.svg'
-          a.click()
-          URL.revokeObjectURL(a.href)
-        }
-        document.body.removeChild(tempDiv)
-      }, 120)
+      const opts = { ...buildQROptions(currentSize), type: 'svg' }
+      const qr = new QRCodeStyling(opts)
+      qr.download({ name: 'qr-' + currentQRSlug + '-' + currentSize + 'px', extension: 'svg' })
     }
 
     function openEdit(id, slug, url, label) {

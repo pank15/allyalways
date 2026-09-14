@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AllyAlways — Admin</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      min-height: 100vh;
+    }
+    header {
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 { font-size: 18px; font-weight: 700; color: #f8fafc; }
+    header span { font-size: 13px; color: #64748b; }
+    .logout-btn {
+      background: none;
+      border: 1px solid #334155;
+      color: #94a3b8;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .logout-btn:hover { border-color: #ef4444; color: #ef4444; }
+    main { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+    .add-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+    .add-card h2 { font-size: 15px; font-weight: 600; color: #e2e8f0; margin-bottom: 16px; }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      color: #64748b;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 9px 12px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 7px;
+      color: #f8fafc;
+      font-size: 14px;
+      outline: none;
+    }
+    .form-group input:focus { border-color: #6366f1; }
+    .slug-prefix {
+      display: flex;
+      align-items: center;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 7px;
+      overflow: hidden;
+    }
+    .slug-prefix span {
+      padding: 9px 10px;
+      color: #475569;
+      font-size: 13px;
+      white-space: nowrap;
+      border-right: 1px solid #334155;
+    }
+    .slug-prefix input {
+      border: none;
+      border-radius: 0;
+      background: transparent;
+    }
+    .btn-primary {
+      padding: 9px 20px;
+      background: #6366f1;
+      color: white;
+      border: none;
+      border-radius: 7px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-primary:hover { background: #4f46e5; }
+    .alert {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    .alert-error { background: #450a0a; border: 1px solid #7f1d1d; color: #fca5a5; }
+    .alert-success { background: #052e16; border: 1px solid #14532d; color: #86efac; }
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      text-align: left;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #475569;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid #1e293b;
+    }
+    td { padding: 12px 14px; border-bottom: 1px solid #1e293b; font-size: 14px; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #1e293b; }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-active { background: #052e16; color: #86efac; border: 1px solid #14532d; }
+    .badge-inactive { background: #1c1917; color: #78716c; border: 1px solid #292524; }
+    .slug-link { color: #818cf8; font-weight: 600; text-decoration: none; }
+    .slug-link:hover { text-decoration: underline; }
+    .url-text { color: #64748b; font-size: 13px; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .actions { display: flex; gap: 8px; align-items: center; }
+    .btn-sm {
+      padding: 4px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid;
+    }
+    .btn-toggle { background: #1e293b; border-color: #334155; color: #94a3b8; }
+    .btn-toggle:hover { border-color: #6366f1; color: #818cf8; }
+    .btn-delete { background: none; border-color: #7f1d1d; color: #ef4444; }
+    .btn-delete:hover { background: #450a0a; }
+    .clicks { color: #64748b; font-size: 13px; }
+    .empty { text-align: center; padding: 48px; color: #475569; }
+    .copy-btn {
+      background: none; border: none; cursor: pointer; color: #475569;
+      font-size: 12px; padding: 2px 6px;
+    }
+    .copy-btn:hover { color: #94a3b8; }
+    dialog {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 24px;
+      color: #f8fafc;
+      width: 480px;
+    }
+    dialog h3 { margin-bottom: 16px; font-size: 15px; }
+    dialog::backdrop { background: rgba(0,0,0,0.7); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AllyAlways <span>/ Admin</span></h1>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <span>สวัสดี, <%= user.username %></span>
+      <form method="POST" action="/admin/logout">
+        <button type="submit" class="logout-btn">ออกจากระบบ</button>
+      </form>
+    </div>
+  </header>
+  <main>
+    <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+    <% if (success) { %><div class="alert alert-success"><%= success %></div><% } %>
+
+    <div class="add-card">
+      <h2>เพิ่ม Redirect Link ใหม่</h2>
+      <form method="POST" action="/admin/links">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Slug (ชื่อย่อ)</label>
+            <div class="slug-prefix">
+              <span>/redirect/</span>
+              <input type="text" name="slug" placeholder="my-link" required pattern="[a-zA-Z0-9_-]+" title="ตัวอักษร ตัวเลข - หรือ _">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Destination URL</label>
+            <input type="url" name="url" placeholder="https://example.com" required>
+          </div>
+          <div class="form-group">
+            <label>Label (ชื่อเพื่อจำ)</label>
+            <input type="text" name="label" placeholder="เช่น Facebook Page">
+          </div>
+          <button type="submit" class="btn-primary">+ เพิ่ม</button>
+        </div>
+      </form>
+    </div>
+
+    <% if (links.length === 0) { %>
+      <div class="empty">ยังไม่มี link — เพิ่มได้เลยข้างบน</div>
+    <% } else { %>
+    <table>
+      <thead>
+        <tr>
+          <th>Slug</th>
+          <th>Label</th>
+          <th>Destination</th>
+          <th>Clicks</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% links.forEach(link => { %>
+        <tr>
+          <td>
+            <a class="slug-link" href="/redirect/<%= link.slug %>" target="_blank">/redirect/<%= link.slug %></a>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText(location.origin+'/redirect/<%= link.slug %>')">📋</button>
+          </td>
+          <td><%= link.label || '—' %></td>
+          <td><div class="url-text" title="<%= link.url %>"><%= link.url %></div></td>
+          <td><span class="clicks"><%= link.clicks.toLocaleString() %></span></td>
+          <td>
+            <span class="badge <%= link.active ? 'badge-active' : 'badge-inactive' %>">
+              <%= link.active ? 'Active' : 'Inactive' %>
+            </span>
+          </td>
+          <td>
+            <div class="actions">
+              <form method="POST" action="/admin/links/<%= link.id %>/toggle">
+                <button type="submit" class="btn-sm btn-toggle"><%= link.active ? 'Pause' : 'Enable' %></button>
+              </form>
+              <button class="btn-sm btn-toggle" onclick="openEdit(<%= link.id %>, '<%= link.slug %>', `<%= link.url %>`, '<%= link.label %>')">Edit</button>
+              <form method="POST" action="/admin/links/<%= link.id %>/delete" onsubmit="return confirm('ลบ /redirect/<%= link.slug %> ใช่ไหม?')">
+                <button type="submit" class="btn-sm btn-delete">Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <% } %>
+  </main>
+
+  <dialog id="editDialog">
+    <h3>แก้ไข Link</h3>
+    <form id="editForm" method="POST">
+      <div class="form-group" style="margin-bottom:12px">
+        <label>Slug</label>
+        <input id="editSlug" type="text" disabled style="background:#0f172a;border:1px solid #334155;border-radius:7px;color:#475569;padding:9px 12px;width:100%">
+      </div>
+      <div class="form-group" style="margin-bottom:12px">
+        <label>Destination URL</label>
+        <input id="editUrl" type="url" name="url" required style="background:#0f172a;border:1px solid #334155;border-radius:7px;color:#f8fafc;padding:9px 12px;width:100%;outline:none">
+      </div>
+      <div class="form-group" style="margin-bottom:20px">
+        <label>Label</label>
+        <input id="editLabel" type="text" name="label" style="background:#0f172a;border:1px solid #334155;border-radius:7px;color:#f8fafc;padding:9px 12px;width:100%;outline:none">
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button type="button" onclick="document.getElementById('editDialog').close()" class="btn-sm btn-toggle" style="padding:8px 16px">ยกเลิก</button>
+        <button type="submit" class="btn-primary">บันทึก</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    function openEdit(id, slug, url, label) {
+      document.getElementById('editSlug').value = '/redirect/' + slug
+      document.getElementById('editUrl').value = url
+      document.getElementById('editLabel').value = label
+      document.getElementById('editForm').action = '/admin/links/' + id + '/edit'
+      document.getElementById('editDialog').showModal()
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "file:/app/data/allyalways.db"
+      SESSION_SECRET: "${SESSION_SECRET:-allyalways-super-secret-changeme}"
+      PORT: "3000"
+      ADMIN_USERNAME: "${ADMIN_USERNAME:-Pank}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD:-123456}"
+    volumes:
+      - ./data:/app/data

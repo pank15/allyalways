@@ -12,3 +12,5 @@ services:
       ADMIN_PASSWORD: "${ADMIN_PASSWORD:-123456}"
     volumes:
       - ./data:/app/data
+      - ./src:/app/src
+      - ./prisma:/app/prisma

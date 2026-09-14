@@ -10,10 +10,10 @@ echo "[1] Pull latest code..."
 git pull origin main
 
 echo "[2] Build Docker image..."
-docker compose build --no-cache
+docker compose build
 
 echo "[3] Start containers..."
-docker compose up -d
+docker compose up -d --force-recreate
 
 echo "[4] Wait for startup..."
 sleep 3

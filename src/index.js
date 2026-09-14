@@ -22,10 +22,11 @@ app.use(session({
 }))
 
 const redirectFactory = require('./routes/redirect')
-const PREFIXES = ['redirect', 'shop', 'dir', 'link', 'sol']
+const PREFIXES = ['redirect', 'shop', 'dir', 'link', 'sol', 'contact']
 PREFIXES.forEach(p => app.use(`/${p}`, redirectFactory(prisma, p)))
 
 app.use('/admin', require('./routes/admin')(prisma))
+app.use('/contact', require('./routes/contact')(prisma))
 
 app.get('/', (req, res) => {
   res.redirect('/admin')

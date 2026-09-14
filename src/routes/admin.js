@@ -4,7 +4,7 @@ const { requireLogin } = require('../middleware/auth')
 
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'Pank'
 const ADMIN_PASSWORD_HASH = bcrypt.hashSync(process.env.ADMIN_PASSWORD || '123456', 10)
-const PREFIXES = ['redirect', 'shop', 'dir', 'link', 'sol']
+const PREFIXES = ['redirect', 'shop', 'dir', 'link', 'sol', 'contact']
 
 module.exports = function (prisma) {
   const router = express.Router()

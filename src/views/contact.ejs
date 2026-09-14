@@ -2,78 +2,124 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>AllyAlways — Contact</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+    }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #f5f3ee;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      background: #f0ece3;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 48px 20px 40px;
+      padding: 52px 24px 40px;
     }
-    .logo {
-      font-size: 22px;
+
+    .heading {
+      font-size: 32px;
       font-weight: 800;
-      color: #1a1a1a;
+      color: #111111;
+      text-align: center;
+      line-height: 1.2;
       letter-spacing: -0.5px;
-      margin-bottom: 6px;
+      margin-bottom: 36px;
+      max-width: 340px;
     }
-    .tagline { font-size: 13px; color: #999; margin-bottom: 36px; }
+
     .buttons {
       width: 100%;
-      max-width: 420px;
+      max-width: 400px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 13px;
     }
+
     .link-btn {
+      position: relative;
       display: flex;
       align-items: center;
-      gap: 14px;
-      padding: 14px 18px;
+      width: 100%;
+      padding: 0 20px;
+      height: 58px;
       background: #ffffff;
-      border: 1.5px solid #e8e4dc;
+      border: 1.8px solid #1a1a1a;
       border-radius: 100px;
       text-decoration: none;
-      color: #1a1a1a;
-      font-size: 15px;
-      font-weight: 600;
-      transition: all 0.18s ease;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      color: #111111;
+      font-size: 16px;
+      font-weight: 700;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      cursor: pointer;
     }
     .link-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-      border-color: #ccc;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
     }
-    .link-btn:active { transform: translateY(0); box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .link-btn:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
     .icon-wrap {
-      width: 38px;
-      height: 38px;
+      position: absolute;
+      left: 18px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
     }
-    .icon-wrap svg { width: 20px; height: 20px; }
-    .btn-label { flex: 1; }
-    .arrow { color: #c8c2b8; font-size: 20px; line-height: 1; }
-    .empty { text-align: center; color: #bbb; margin-top: 60px; font-size: 14px; line-height: 2.2; }
-    .footer { margin-top: 48px; font-size: 12px; color: #c8c2b8; }
+    .icon-wrap svg { width: 20px; height: 20px; display: block; }
+
+    .btn-text {
+      width: 100%;
+      text-align: center;
+    }
+
+    .divider-wrap {
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 4px 0;
+    }
+    .divider-line { flex: 1; height: 1px; background: #d4cfc5; }
+    .divider-text { font-size: 13px; color: #aaa; font-weight: 500; }
+
+    .find-link {
+      margin-top: 24px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #111;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      cursor: pointer;
+    }
+    .find-link:hover { opacity: 0.6; }
+
+    .empty {
+      text-align: center; color: #bbb;
+      margin-top: 60px; font-size: 14px; line-height: 2.4;
+      max-width: 280px;
+    }
+    .empty strong { color: #6366f1; }
   </style>
 </head>
 <body>
-  <div class="logo">AllyAlways</div>
-  <div class="tagline">ช่องทางติดต่อทั้งหมด</div>
+
+  <div class="heading">ยินดีต้อนรับ!<br>ติดต่อเราได้เลย</div>
 
   <div class="buttons">
+
     <% if (links.length === 0) { %>
-      <div class="empty">ยังไม่มีช่องทางติดต่อ<br>เพิ่มได้ที่ /admin<br>เลือก prefix: <strong>contact</strong></div>
+    <div class="empty">ยังไม่มีช่องทางติดต่อ<br>เพิ่มได้ที่ /admin<br>เลือก prefix: <strong>contact</strong></div>
     <% } %>
 
     <% links.forEach(function(link) {
@@ -87,6 +133,7 @@
       var isLine       = s.includes('line')
       var isYoutube    = s.includes('youtube') || s === 'yt'
     %>
+
     <a href="<%= link.url %>" target="_blank" rel="noopener" class="link-btn">
 
       <% if (isFacebook) { %>
@@ -101,22 +148,22 @@
 
       <% } else if (isTiktokShop) { %>
       <div class="icon-wrap" style="background:#ff6550">
-        <svg viewBox="0 0 24 24" fill="white"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.05a8.16 8.16 0 004.77 1.52V7.12a4.85 4.85 0 01-1-.43z"/><path d="M7 10.5H5v3h2v6h3v-6h2l1-3h-3V9c0-.55.45-1 1-1h2V5h-2a4 4 0 00-4 4v1.5z" opacity=".3"/></svg>
+        <svg viewBox="0 0 24 24" fill="white"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.05a8.16 8.16 0 004.77 1.52V7.12a4.85 4.85 0 01-1-.43z"/></svg>
       </div>
 
       <% } else if (isTiktok) { %>
       <div class="icon-wrap" style="background:#010101">
-        <svg viewBox="0 0 24 24" fill="white"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.05a8.16 8.16 0 004.77 1.52V7.12a4.85 4.85 0 01-1-.43z"/></svg>
+        <svg viewBox="0 0 24 24" fill="white"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.05a8.16 8.16 0 004.77 1.52V7.12a4.85 4.85 0 01-1-.43z"/></svg>
       </div>
 
       <% } else if (isShopee) { %>
-      <div class="icon-wrap" style="background:#f53d2d">
-        <svg viewBox="0 0 24 24" fill="white"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 4.5c1.381 0 2.5 1.119 2.5 2.5S13.381 9.5 12 9.5 9.5 8.381 9.5 7s1.119-2.5 2.5-2.5zm5.5 13.5H6.5l1-7h9l1 7z"/></svg>
+      <div class="icon-wrap" style="background:#ee4d2d">
+        <svg viewBox="0 0 50 50" fill="white"><path d="M25 3C15.06 3 7 11.06 7 21c0 4.38 1.58 8.39 4.19 11.5L8 46l13.33-4.44A17.87 17.87 0 0025 42c9.94 0 18-8.06 18-18S34.94 3 25 3zm0 5c7.18 0 13 5.82 13 13S32.18 34 25 34s-13-5.82-13-13 5.82-13 13-13zm-5.5 8a1.5 1.5 0 000 3h.09A5.51 5.51 0 0025 24.5 5.51 5.51 0 0030.41 19h.09a1.5 1.5 0 000-3h-11z"/></svg>
       </div>
 
       <% } else if (isLazada) { %>
-      <div class="icon-wrap" style="background:#0f0f6e">
-        <svg viewBox="0 0 24 24" fill="white"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      <div class="icon-wrap" style="background:#f57224">
+        <svg viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
       </div>
 
       <% } else if (isLine) { %>
@@ -131,16 +178,20 @@
 
       <% } else { %>
       <div class="icon-wrap" style="background:#6366f1">
-        <svg viewBox="0 0 24 24" fill="white"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
       </div>
       <% } %>
 
-      <span class="btn-label"><%= link.label || link.slug %></span>
-      <span class="arrow">›</span>
+      <span class="btn-text"><%= link.label || link.slug %></span>
     </a>
+
     <% }) %>
+
   </div>
 
-  <div class="footer">allyalways.com</div>
+  <% if (links.length > 0) { %>
+  <a href="/" class="find-link">allyalways.com</a>
+  <% } %>
+
 </body>
 </html>

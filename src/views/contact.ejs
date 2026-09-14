@@ -160,6 +160,7 @@
       var isLazada     = s.includes('lazada')
       var isLine       = s.includes('line')
       var isYoutube    = s.includes('youtube') || s === 'yt'
+      var is7Eleven    = s.includes('7eleven') || s.includes('seven11') || s.includes('7-eleven')
     %>
 
     <a href="<%= link.url %>" target="_blank" rel="noopener" class="link-btn">
@@ -186,7 +187,10 @@
 
       <% } else if (isShopee) { %>
       <div class="icon-wrap">
-        <svg viewBox="0 0 64 64"><path fill="white" d="M32 4C16.536 4 4 16.536 4 32s12.536 28 28 28 28-12.536 28-28S47.464 4 32 4zm0 8c2.76 0 5 2.24 5 5s-2.24 5-5 5-5-2.24-5-5 2.24-5 5-5zm12 34H20l2-18h20l2 18z"/></svg>
+        <svg viewBox="0 0 24 24">
+          <path fill="white" d="M18.5 8h-1.27C16.78 5.67 14.57 4 12 4S7.22 5.67 6.77 8H5.5C4.12 8 3 9.12 3 10.5v9C3 20.88 4.12 22 5.5 22h13c1.38 0 2.5-1.12 2.5-2.5v-9C21 9.12 19.88 8 18.5 8zm-6.5-2.5c1.74 0 3.22 1.1 3.7 2.5H8.3c.48-1.4 1.96-2.5 3.7-2.5z"/>
+          <text x="12" y="19" text-anchor="middle" font-size="9" font-weight="900" font-family="Arial, sans-serif" fill="black">S</text>
+        </svg>
       </div>
 
       <% } else if (isLazada) { %>
@@ -202,6 +206,15 @@
       <% } else if (isYoutube) { %>
       <div class="icon-wrap">
         <svg viewBox="0 0 24 24"><path fill="white" d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+      </div>
+
+      <% } else if (is7Eleven) { %>
+      <div class="icon-wrap">
+        <svg viewBox="0 0 24 24">
+          <path fill="white" d="M5 3h14l-1 3H6L5 3zm-.5 4h15l-2 14H6.5L4.5 7z"/>
+          <path fill="white" d="M8 9h6.5l-4.5 5.5h3V16H7.5l4.5-5.5H8V9z"/>
+          <text x="12" y="20.5" text-anchor="middle" font-size="4" font-weight="900" font-family="Arial, sans-serif" fill="black">ELEVEN</text>
+        </svg>
       </div>
 
       <% } else { %>

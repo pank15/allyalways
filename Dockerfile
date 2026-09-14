@@ -1,4 +1,6 @@
-FROM node:20-alpine
+FROM node:20-slim
+
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -11,6 +13,6 @@ RUN npx prisma generate
 
 RUN mkdir -p data
 
-EXPOSE 3000
+EXPOSE 3009
 
 CMD ["sh", "-c", "npx prisma db push --skip-generate && node src/index.js"]

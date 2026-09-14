@@ -114,12 +114,12 @@
 </head>
 <body>
 
-  <div class="heading">ยินดีต้อนรับ!<br>ติดต่อเราได้เลย</div>
+  <div class="heading">Welcome!<br>Let's get to it.</div>
 
   <div class="buttons">
 
     <% if (links.length === 0) { %>
-    <div class="empty">ยังไม่มีช่องทางติดต่อ<br>เพิ่มได้ที่ /admin<br>เลือก prefix: <strong>contact</strong></div>
+    <div class="empty">No links yet.<br>Add them at /admin<br>using prefix: <strong>contact</strong></div>
     <% } %>
 
     <% links.forEach(function(link) {
@@ -190,7 +190,7 @@
   </div>
 
   <% if (links.length > 0) { %>
-  <a href="/" class="find-link">allyalways.com</a>
+  <a href="/" class="find-link">Find us online</a>
   <% } %>
 
 </body>

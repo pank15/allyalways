@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AllyAlways — Admin</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -80,11 +81,7 @@
       white-space: nowrap;
       border-right: 1px solid #334155;
     }
-    .slug-prefix input {
-      border: none;
-      border-radius: 0;
-      background: transparent;
-    }
+    .slug-prefix input { border: none; border-radius: 0; background: transparent; }
     .btn-primary {
       padding: 9px 20px;
       background: #6366f1;
@@ -97,12 +94,7 @@
       white-space: nowrap;
     }
     .btn-primary:hover { background: #4f46e5; }
-    .alert {
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 13px;
-      margin-bottom: 16px;
-    }
+    .alert { padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
     .alert-error { background: #450a0a; border: 1px solid #7f1d1d; color: #fca5a5; }
     .alert-success { background: #052e16; border: 1px solid #14532d; color: #86efac; }
     table { width: 100%; border-collapse: collapse; }
@@ -130,8 +122,8 @@
     .badge-inactive { background: #1c1917; color: #78716c; border: 1px solid #292524; }
     .slug-link { color: #818cf8; font-weight: 600; text-decoration: none; }
     .slug-link:hover { text-decoration: underline; }
-    .url-text { color: #64748b; font-size: 13px; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .actions { display: flex; gap: 8px; align-items: center; }
+    .url-text { color: #64748b; font-size: 13px; max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
     .btn-sm {
       padding: 4px 10px;
       border-radius: 5px;
@@ -144,6 +136,8 @@
     .btn-toggle:hover { border-color: #6366f1; color: #818cf8; }
     .btn-delete { background: none; border-color: #7f1d1d; color: #ef4444; }
     .btn-delete:hover { background: #450a0a; }
+    .btn-qr { background: #0f2438; border-color: #0ea5e9; color: #38bdf8; }
+    .btn-qr:hover { background: #0c4a6e; }
     .clicks { color: #64748b; font-size: 13px; }
     .empty { text-align: center; padding: 48px; color: #475569; }
     .copy-btn {
@@ -151,16 +145,115 @@
       font-size: 12px; padding: 2px 6px;
     }
     .copy-btn:hover { color: #94a3b8; }
+
+    /* Dialog base */
     dialog {
       background: #1e293b;
       border: 1px solid #334155;
       border-radius: 12px;
       padding: 24px;
       color: #f8fafc;
-      width: 480px;
     }
     dialog h3 { margin-bottom: 16px; font-size: 15px; }
-    dialog::backdrop { background: rgba(0,0,0,0.7); }
+    dialog::backdrop { background: rgba(0,0,0,0.75); backdrop-filter: blur(3px); }
+
+    /* Edit dialog */
+    #editDialog { width: 480px; }
+
+    /* QR dialog */
+    #qrDialog { width: 520px; max-width: 95vw; }
+    .qr-header { margin-bottom: 20px; }
+    .qr-header h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .qr-header p { font-size: 13px; color: #64748b; }
+    .qr-body {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .qr-canvas-wrap {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 1px #334155;
+    }
+    #qrCanvas { display: block; }
+    .qr-info { flex: 1; min-width: 0; }
+    .qr-info-row { margin-bottom: 14px; }
+    .qr-info-row label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+    .qr-info-row .val {
+      font-size: 13px;
+      color: #e2e8f0;
+      word-break: break-all;
+      line-height: 1.5;
+    }
+    .qr-info-row .val.mono {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      color: #818cf8;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .qr-sizes { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .size-btn {
+      padding: 5px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid #334155;
+      background: #0f172a;
+      color: #64748b;
+      transition: all 0.15s;
+    }
+    .size-btn.active, .size-btn:hover {
+      border-color: #6366f1;
+      color: #818cf8;
+      background: #1e1b4b;
+    }
+    .qr-actions { display: flex; gap: 10px; justify-content: flex-end; }
+    .btn-download {
+      padding: 9px 20px;
+      background: #0ea5e9;
+      color: white;
+      border: none;
+      border-radius: 7px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-download:hover { background: #0284c7; }
+    .btn-download-svg {
+      padding: 9px 20px;
+      background: #1e293b;
+      color: #94a3b8;
+      border: 1px solid #334155;
+      border-radius: 7px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-download-svg:hover { border-color: #6366f1; color: #818cf8; }
+    .qr-url-box {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #64748b;
+      word-break: break-all;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .qr-url-box strong { color: #94a3b8; display: block; font-size: 11px; margin-bottom: 3px; }
   </style>
 </head>
 <body>
@@ -220,7 +313,7 @@
         <tr>
           <td>
             <a class="slug-link" href="/redirect/<%= link.slug %>" target="_blank">/redirect/<%= link.slug %></a>
-            <button class="copy-btn" onclick="navigator.clipboard.writeText(location.origin+'/redirect/<%= link.slug %>')">📋</button>
+            <button class="copy-btn" onclick="copyLink('/redirect/<%= link.slug %>', this)" title="Copy link">📋</button>
           </td>
           <td><%= link.label || '—' %></td>
           <td><div class="url-text" title="<%= link.url %>"><%= link.url %></div></td>
@@ -232,6 +325,7 @@
           </td>
           <td>
             <div class="actions">
+              <button class="btn-sm btn-qr" onclick="openQR('<%= link.slug %>', '<%= link.label || link.slug %>', `<%= link.url %>`)">QR</button>
               <form method="POST" action="/admin/links/<%= link.id %>/toggle">
                 <button type="submit" class="btn-sm btn-toggle"><%= link.active ? 'Pause' : 'Enable' %></button>
               </form>
@@ -248,6 +342,7 @@
     <% } %>
   </main>
 
+  <!-- Edit Dialog -->
   <dialog id="editDialog">
     <h3>แก้ไข Link</h3>
     <form id="editForm" method="POST">
@@ -270,13 +365,178 @@
     </form>
   </dialog>
 
+  <!-- QR Dialog -->
+  <dialog id="qrDialog">
+    <div class="qr-header">
+      <h3 id="qrTitle">QR Code</h3>
+      <p id="qrSubtitle"></p>
+    </div>
+    <div class="qr-body">
+      <div class="qr-canvas-wrap">
+        <div id="qrCanvas"></div>
+      </div>
+      <div class="qr-info">
+        <div class="qr-info-row">
+          <label>Redirect URL</label>
+          <div class="val mono" id="qrShortUrl"></div>
+        </div>
+        <div class="qr-info-row">
+          <label>Destination</label>
+          <div class="val" id="qrDestUrl"></div>
+        </div>
+        <div class="qr-info-row">
+          <label>ขนาด QR Code</label>
+          <div class="qr-sizes">
+            <button class="size-btn" onclick="changeSize(256)">256px</button>
+            <button class="size-btn active" onclick="changeSize(320)">320px</button>
+            <button class="size-btn" onclick="changeSize(512)">512px</button>
+            <button class="size-btn" onclick="changeSize(1024)">1024px</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="qr-actions">
+      <button class="btn-sm btn-toggle" style="padding:8px 16px" onclick="document.getElementById('qrDialog').close()">ปิด</button>
+      <button class="btn-download-svg" onclick="downloadSVG()">Download SVG</button>
+      <button class="btn-download" onclick="downloadPNG()">Download PNG</button>
+    </div>
+  </dialog>
+
   <script>
+    let currentQRUrl = ''
+    let currentQRSlug = ''
+    let currentSize = 320
+    let qrInstance = null
+
+    function openQR(slug, label, destUrl) {
+      currentQRSlug = slug
+      const shortUrl = location.origin + '/redirect/' + slug
+      currentQRUrl = shortUrl
+
+      document.getElementById('qrTitle').textContent = 'QR Code — ' + (label || slug)
+      document.getElementById('qrSubtitle').textContent = label !== slug ? label : ''
+      document.getElementById('qrShortUrl').textContent = shortUrl
+      document.getElementById('qrDestUrl').textContent = destUrl
+
+      renderQR(currentSize)
+      document.getElementById('qrDialog').showModal()
+    }
+
+    function renderQR(size) {
+      currentSize = size
+      const container = document.getElementById('qrCanvas')
+      container.innerHTML = ''
+
+      // update active size button
+      document.querySelectorAll('.size-btn').forEach(b => {
+        b.classList.toggle('active', b.textContent === size + 'px')
+      })
+
+      // display size = min(size, 256) for screen; full size encoded
+      const displaySize = Math.min(size, 256)
+
+      qrInstance = new QRCode(container, {
+        text: currentQRUrl,
+        width: displaySize,
+        height: displaySize,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      })
+    }
+
+    function changeSize(size) {
+      renderQR(size)
+    }
+
+    function downloadPNG() {
+      // render at full resolution in a temp canvas
+      const tempDiv = document.createElement('div')
+      tempDiv.style.position = 'fixed'
+      tempDiv.style.left = '-9999px'
+      document.body.appendChild(tempDiv)
+
+      new QRCode(tempDiv, {
+        text: currentQRUrl,
+        width: currentSize,
+        height: currentSize,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      })
+
+      setTimeout(() => {
+        const canvas = tempDiv.querySelector('canvas')
+        if (!canvas) {
+          // fallback: use img
+          const img = tempDiv.querySelector('img')
+          const a = document.createElement('a')
+          a.href = img.src
+          a.download = 'qr-' + currentQRSlug + '-' + currentSize + 'px.png'
+          a.click()
+        } else {
+          const a = document.createElement('a')
+          a.href = canvas.toDataURL('image/png')
+          a.download = 'qr-' + currentQRSlug + '-' + currentSize + 'px.png'
+          a.click()
+        }
+        document.body.removeChild(tempDiv)
+      }, 100)
+    }
+
+    function downloadSVG() {
+      const s = currentSize
+      const qr = qrcodeSVG(currentQRUrl, s)
+      const blob = new Blob([qr], { type: 'image/svg+xml' })
+      const a = document.createElement('a')
+      a.href = URL.createObjectURL(blob)
+      a.download = 'qr-' + currentQRSlug + '-' + s + 'px.svg'
+      a.click()
+      URL.revokeObjectURL(a.href)
+    }
+
+    function qrcodeSVG(text, size) {
+      // generate raw QR matrix using QRCode library, export as SVG
+      const tempDiv = document.createElement('div')
+      tempDiv.style.visibility = 'hidden'
+      tempDiv.style.position = 'fixed'
+      document.body.appendChild(tempDiv)
+      new QRCode(tempDiv, { text, width: size, height: size, correctLevel: QRCode.CorrectLevel.H })
+      const canvas = tempDiv.querySelector('canvas')
+      let svgContent = ''
+      if (canvas) {
+        const ctx = canvas.getContext('2d')
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+        const cellSize = 1
+        const w = canvas.width, h = canvas.height
+        let rects = ''
+        for (let y = 0; y < h; y++) {
+          for (let x = 0; x < w; x++) {
+            const idx = (y * w + x) * 4
+            if (imageData.data[idx] < 128) {
+              rects += `<rect x="${x}" y="${y}" width="1" height="1"/>`
+            }
+          }
+        }
+        svgContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${size}" height="${size}"><rect width="${w}" height="${h}" fill="white"/><g fill="black">${rects}</g></svg>`
+      }
+      document.body.removeChild(tempDiv)
+      return svgContent || '<svg xmlns="http://www.w3.org/2000/svg"/>'
+    }
+
     function openEdit(id, slug, url, label) {
       document.getElementById('editSlug').value = '/redirect/' + slug
       document.getElementById('editUrl').value = url
       document.getElementById('editLabel').value = label
       document.getElementById('editForm').action = '/admin/links/' + id + '/edit'
       document.getElementById('editDialog').showModal()
+    }
+
+    function copyLink(path, btn) {
+      navigator.clipboard.writeText(location.origin + path)
+      const orig = btn.textContent
+      btn.textContent = '✓'
+      setTimeout(() => btn.textContent = orig, 1500)
     }
   </script>
 </body>

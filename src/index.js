@@ -21,7 +21,10 @@ app.use(session({
   cookie: { maxAge: 24 * 60 * 60 * 1000 }
 }))
 
-app.use('/redirect', require('./routes/redirect')(prisma))
+const redirectFactory = require('./routes/redirect')
+const PREFIXES = ['redirect', 'shop', 'dir', 'link', 'sol']
+PREFIXES.forEach(p => app.use(`/${p}`, redirectFactory(prisma, p)))
+
 app.use('/admin', require('./routes/admin')(prisma))
 
 app.get('/', (req, res) => {

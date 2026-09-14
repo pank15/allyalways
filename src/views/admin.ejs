@@ -80,15 +80,26 @@
       transition: border-color 0.15s;
     }
     .slug-prefix:focus-within { border-color: #6366f1; }
-    .slug-prefix > span {
-      padding: 9px 10px;
-      color: #94a3b8;
+    .prefix-select {
+      padding: 0 10px;
+      color: #475569;
       font-size: 13px;
+      font-weight: 600;
       white-space: nowrap;
       border-right: 1px solid #e2e8f0;
       background: #f1f5f9;
       border-radius: 7px 0 0 7px;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      padding-right: 26px;
     }
+    .prefix-select:focus { color: #6366f1; }
     .slug-prefix input {
       border: none;
       border-radius: 0;
@@ -110,6 +121,18 @@
       transition: background 0.15s;
     }
     .btn-random:hover { background: #e0e7ff; }
+    .prefix-badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      background: #f1f5f9;
+      color: #64748b;
+      border: 1px solid #e2e8f0;
+      margin-right: 3px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
     .btn-primary {
       padding: 9px 20px;
       background: #6366f1;
@@ -323,9 +346,13 @@
       <form method="POST" action="/admin/links">
         <div class="form-row">
           <div class="form-group">
-            <label>Slug (ชื่อย่อ)</label>
+            <label>Path / Slug</label>
             <div class="slug-prefix">
-              <span>/redirect/</span>
+              <select name="prefix" class="prefix-select" id="prefixSelect">
+                <% prefixes.forEach(p => { %>
+                  <option value="<%= p %>">/<%= p %>/</option>
+                <% }) %>
+              </select>
               <input type="text" name="slug" id="slugInput" placeholder="my-link" required pattern="[a-zA-Z0-9_-]+" title="ตัวอักษร ตัวเลข - หรือ _">
               <button type="button" class="btn-random" onclick="randomSlug()" title="สุ่ม slug 4 ตัว">🎲</button>
             </div>
@@ -362,8 +389,8 @@
           <% links.forEach(link => { %>
           <tr>
             <td>
-              <a class="slug-link" href="/redirect/<%= link.slug %>" target="_blank">/redirect/<%= link.slug %></a>
-              <button class="copy-btn" onclick="copyLink('/redirect/<%= link.slug %>', this)" title="Copy">📋</button>
+              <span class="prefix-badge"><%= link.prefix %></span><a class="slug-link" href="/<%= link.prefix %>/<%= link.slug %>" target="_blank"><%= link.slug %></a>
+              <button class="copy-btn" onclick="copyLink('/<%= link.prefix %>/<%= link.slug %>', this)" title="Copy">📋</button>
             </td>
             <td><span style="color:#475569"><%= link.label || '—' %></span></td>
             <td><div class="url-text" title="<%= link.url %>"><%= link.url %></div></td>
@@ -375,7 +402,7 @@
             </td>
             <td>
               <div class="actions">
-                <button class="btn-sm btn-qr" onclick="openQR('<%= link.slug %>', '<%= link.label || link.slug %>', `<%= link.url %>`)">QR</button>
+                <button class="btn-sm btn-qr" onclick="openQR('<%= link.prefix %>/<%= link.slug %>', '<%= link.label || link.slug %>', `<%= link.url %>`)">QR</button>
                 <form method="POST" action="/admin/links/<%= link.id %>/toggle">
                   <button type="submit" class="btn-sm btn-default"><%= link.active ? 'Pause' : 'Enable' %></button>
                 </form>
@@ -465,9 +492,9 @@
       document.getElementById('slugInput').value = result
     }
 
-    function openQR(slug, label, destUrl) {
-      currentQRSlug = slug
-      const shortUrl = location.origin + '/redirect/' + slug
+    function openQR(path, label, destUrl) {
+      currentQRSlug = path.replace('/', '-')
+      const shortUrl = location.origin + '/' + path
       currentQRUrl = shortUrl
       document.getElementById('qrTitle').textContent = 'QR Code — ' + (label || slug)
       document.getElementById('qrSubtitle').textContent = label !== slug ? label : ''

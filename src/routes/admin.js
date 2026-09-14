@@ -4,6 +4,7 @@ const { requireLogin } = require('../middleware/auth')
 
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'Pank'
 const ADMIN_PASSWORD_HASH = bcrypt.hashSync(process.env.ADMIN_PASSWORD || '123456', 10)
+const PREFIXES = ['redirect', 'shop', 'dir', 'link', 'sol']
 
 module.exports = function (prisma) {
   const router = express.Router()
@@ -15,10 +16,7 @@ module.exports = function (prisma) {
 
   router.post('/login', async (req, res) => {
     const { username, password } = req.body
-    if (
-      username === ADMIN_USERNAME &&
-      bcrypt.compareSync(password, ADMIN_PASSWORD_HASH)
-    ) {
+    if (username === ADMIN_USERNAME && bcrypt.compareSync(password, ADMIN_PASSWORD_HASH)) {
       req.session.user = { username }
       return res.redirect('/admin')
     }
@@ -32,29 +30,25 @@ module.exports = function (prisma) {
 
   router.get('/', requireLogin, async (req, res) => {
     const links = await prisma.link.findMany({ orderBy: { createdAt: 'desc' } })
-    res.render('admin', { links, user: req.session.user, error: null, success: null })
+    res.render('admin', { links, prefixes: PREFIXES, user: req.session.user, error: null, success: null })
   })
 
   router.post('/links', requireLogin, async (req, res) => {
-    const { slug, url, label } = req.body
+    const { prefix, slug, url, label } = req.body
+    const safePrefix = PREFIXES.includes(prefix) ? prefix : 'redirect'
     try {
-      await prisma.link.create({ data: { slug, url, label: label || '' } })
+      await prisma.link.create({ data: { prefix: safePrefix, slug, url, label: label || '' } })
       const links = await prisma.link.findMany({ orderBy: { createdAt: 'desc' } })
-      res.render('admin', { links, user: req.session.user, error: null, success: `สร้าง /${slug} สำเร็จ` })
+      res.render('admin', { links, prefixes: PREFIXES, user: req.session.user, error: null, success: `สร้าง /${safePrefix}/${slug} สำเร็จ` })
     } catch (err) {
       const links = await prisma.link.findMany({ orderBy: { createdAt: 'desc' } })
-      res.render('admin', { links, user: req.session.user, error: 'Slug นี้มีอยู่แล้ว', success: null })
+      res.render('admin', { links, prefixes: PREFIXES, user: req.session.user, error: 'Slug นี้มีอยู่แล้วใน prefix นี้', success: null })
     }
   })
 
   router.post('/links/:id/toggle', requireLogin, async (req, res) => {
     const link = await prisma.link.findUnique({ where: { id: parseInt(req.params.id) } })
-    if (link) {
-      await prisma.link.update({
-        where: { id: link.id },
-        data: { active: !link.active }
-      })
-    }
+    if (link) await prisma.link.update({ where: { id: link.id }, data: { active: !link.active } })
     res.redirect('/admin')
   })
 
@@ -65,10 +59,7 @@ module.exports = function (prisma) {
 
   router.post('/links/:id/edit', requireLogin, async (req, res) => {
     const { url, label } = req.body
-    await prisma.link.update({
-      where: { id: parseInt(req.params.id) },
-      data: { url, label: label || '' }
-    })
+    await prisma.link.update({ where: { id: parseInt(req.params.id) }, data: { url, label: label || '' } })
     res.redirect('/admin')
   })
 

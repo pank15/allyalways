@@ -1,6 +1,6 @@
 {
   "name": "allyalways",
-  "version": "260923.10.30",
+  "version": "260923.11.00",
   "description": "AllyAlways URL Redirect Service",
   "main": "src/index.js",
   "scripts": {
